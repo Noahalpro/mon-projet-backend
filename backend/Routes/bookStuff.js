@@ -9,7 +9,7 @@ const Book = require('../models/books')
 
 router.post('/', auth, multer, (req, res) => {
   console.log('BODY REÇU :', req.body);
-  const bookObject = JSON.parse(req.body.book); // car req.body.book est une string JSON
+  const bookObject = JSON.parse(req.body.book);
 
   delete bookObject._id;
 
@@ -34,6 +34,22 @@ router.get('/', (req, res,) => {
     .catch(error => res.status(400).json({ error }));
 });
 
+router.get('/bestrating', (req, res) => {
+  Book.find()
+    .then(books => {
+      const sorted = books.sort((a, b) => b.averageRating - a.averageRating);
+      const top3 = sorted.slice(0, 3);
+      res.status(200).json(top3);
+    })
+    .catch(error => res.status(400).json({ error }));
+});
+
+router.delete('/:id', auth, (req, res, next) => {
+  Book.deleteOne({ _id: req.params.id })
+    .then(() => res.status(200).json({ message: 'Objet supprimé !'}))
+    .catch(error => res.status(400).json({ error }));
+});
+
 
 
 router.get('/:id', (req, res) => {
@@ -42,24 +58,29 @@ router.get('/:id', (req, res) => {
     .catch(error => res.status(404).json({ error }));
 });
 
-router.put('/:id', (req, res) => {
+router.put('/:id', auth, (req, res) => {
   Book.updateOne({ _id: req.params.id }, { ...req.body, _id: req.params.id })
     .then(() => res.status(200).json({ message: 'Book modifié !'}))
     .catch(error => res.status(400).json({ error }));
 });
 
-router.put('/:id/rating', (req, res) => {
-  Book.updateOne({ _id: req.params.id },  
-    { $push: { ratings: req.body }, _id: req.params.id }
- )
-    .then(() => res.status(200).json({ message: 'Book modifié !'}))
-    .catch(error => res.status(400).json({ error }));
-});
+router.post('/:id/rating', auth, async (req, res) => {
+  try {
+    const { userId, rating } = req.body;
+    const bookId = req.params.id;
 
-router.delete('/:id', (req, res) => {
-  Book.deleteOne({ _id: req.params.id })
-    .then(() => res.status(200).json({ message: 'Book supprimé !'}))
-    .catch(error => res.status(400).json({ error }));
+    const book = await Book.findOne({ _id: bookId });
+    if (!book) return res.status(404).json({ message: 'Livre non trouvé' });
+
+    book.ratings.push({ userId, grade: rating });
+    const total = book.ratings.reduce((acc, curr) => acc + curr.grade, 0);
+    book.averageRating = total / book.ratings.length;
+
+    await book.save();
+    res.status(200).json(book);
+  } catch (error) {
+    res.status(400).json({ error: error.message });
+  }
 });
 
 
