@@ -17,7 +17,7 @@ const mongoose = require('mongoose');
 mongoose.connect('mongodb+srv://noahalpro:vSeXI5qtESn7SDPw@cluster0.du5olo2.mongodb.net/',
   { useNewUrlParser: true,
     useUnifiedTopology: true })
-  .then(() => console.log('Connexion à MongoDB réussie !'))
+  .then(() => console.log(''))
   .catch(() => console.log('Connexion à MongoDB échouée !'));
 
 

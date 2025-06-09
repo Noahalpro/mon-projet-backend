@@ -1,13 +1,14 @@
 const express = require('express');
 
 const auth = require('../middleware/auth');
+const convertToAvif = require('../middleware/convertToAvif');
 const multer = require('../middleware/multer_config');
 
 const router = express.Router();
 const Book = require('../models/books')
 
 
-router.post('/', auth, multer, (req, res) => {
+router.post('/', auth, multer, convertToAvif, (req, res) => {
   console.log('BODY REÇU :', req.body);
   const bookObject = JSON.parse(req.body.book);
 
