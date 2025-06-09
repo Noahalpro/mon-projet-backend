@@ -2,7 +2,7 @@ const express = require('express');
 
 const auth = require('../middleware/auth');
 const convertToAvif = require('../middleware/convertToAvif');
-const multer = require('../middleware/multer_config');
+const multer = require('../middleware/multerConfig');
 
 const router = express.Router();
 const Book = require('../models/books')
