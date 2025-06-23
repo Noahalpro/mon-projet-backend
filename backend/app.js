@@ -14,11 +14,9 @@ const bookStuffRoutes = require('./Routes/bookStuff');
 const userRoutes = require('./Routes/User');
 
 const mongoose = require('mongoose');
-mongoose.connect('mongodb+srv://noahalpro:vSeXI5qtESn7SDPw@cluster0.du5olo2.mongodb.net/',
-  { useNewUrlParser: true,
-    useUnifiedTopology: true })
+mongoose.connect('mongodb+srv://noahalpro:vSeXI5qtESn7SDPw@cluster0.du5olo2.mongodb.net/')
   .then(() => console.log(''))
-  .catch(() => console.log('Connexion à MongoDB échouée !'));
+  .catch(() => console.log('!'));
 
 
 app.use((req, res, next) => {
